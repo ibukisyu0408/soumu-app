@@ -85,7 +85,7 @@ export default function ParkingListPage() {
                 return (
                   <tr key={lot.id} className="border-t border-gray-100 hover:bg-gray-50">
                     <td className="px-4 py-3">
-                      <Link href={`/parking/${lot.id}`} className="text-blue-600 hover:underline font-medium">
+                      <Link href={`/parking/detail?id=${lot.id}`} className="text-blue-600 hover:underline font-medium">
                         {lot.name}
                       </Link>
                     </td>
@@ -100,7 +100,7 @@ export default function ParkingListPage() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       <Link
-                        href={`/parking/${lot.id}/edit`}
+                        href={`/parking/edit?id=${lot.id}`}
                         className="text-blue-600 hover:underline text-xs"
                       >
                         編集

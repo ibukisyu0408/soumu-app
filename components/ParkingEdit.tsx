@@ -1,16 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { ParkingSpace } from '@/lib/types'
 import ParkingStatusBadge from '@/components/ParkingStatusBadge'
 
-export default function ParkingEditPage() {
-  const params = useParams()
+export default function ParkingEdit() {
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const id = params.id as string
+  const id = searchParams.get('id') || ''
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -35,7 +35,7 @@ export default function ParkingEditPage() {
   })
 
   useEffect(() => {
-    fetchData()
+    if (id) fetchData()
   }, [id])
 
   async function fetchData() {
@@ -92,7 +92,7 @@ export default function ParkingEditPage() {
       return
     }
 
-    router.push(`/parking/${id}`)
+    router.push(`/parking/detail?id=${id}`)
   }
 
   async function handleAddSpace() {
@@ -142,6 +142,7 @@ export default function ParkingEditPage() {
     fetchData()
   }
 
+  if (!id) return <p className="text-gray-500">IDが指定されていません</p>
   if (loading) return <p className="text-gray-500">読み込み中...</p>
 
   return (
@@ -241,7 +242,7 @@ export default function ParkingEditPage() {
             {saving ? '保存中...' : '保存する'}
           </button>
           <Link
-            href={`/parking/${id}`}
+            href={`/parking/detail?id=${id}`}
             className="border border-gray-300 px-6 py-2 rounded-md text-sm hover:bg-gray-50"
           >
             キャンセル
