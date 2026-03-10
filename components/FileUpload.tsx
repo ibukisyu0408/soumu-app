@@ -91,32 +91,34 @@ export default function FileUpload({ parkingLotId, existingFiles = [], onFilesCh
 
     setUploading(true)
     try {
-      for (const pending of pendingFiles) {
-        const timestamp = Date.now()
-        const storagePath = `${parkingLotId}/${timestamp}_${pending.file.name}`
+      const results = await Promise.all(
+        pendingFiles.map(async (pending, index) => {
+          const storagePath = `${parkingLotId}/${Date.now()}_${index}_${pending.file.name}`
 
-        const { error: uploadError } = await supabase.storage
-          .from(BUCKET_NAME)
-          .upload(storagePath, pending.file)
+          const { error: uploadError } = await supabase.storage
+            .from(BUCKET_NAME)
+            .upload(storagePath, pending.file)
 
-        if (uploadError) throw uploadError
+          if (uploadError) throw uploadError
 
-        const { data } = await supabase
-          .from('parking_lot_files')
-          .insert({
-            parking_lot_id: parkingLotId,
-            file_name: pending.file.name,
-            storage_path: storagePath,
-            file_size: pending.file.size,
-            file_type: pending.file.type,
-          })
-          .select()
-          .single()
+          const { data } = await supabase
+            .from('parking_lot_files')
+            .insert({
+              parking_lot_id: parkingLotId,
+              file_name: pending.file.name,
+              storage_path: storagePath,
+              file_size: pending.file.size,
+              file_type: pending.file.type,
+            })
+            .select()
+            .single()
 
-        if (data) {
-          setSavedFiles((prev) => [...prev, data])
-        }
-      }
+          return data
+        })
+      )
+
+      const newFiles = results.filter(Boolean) as ParkingLotFile[]
+      setSavedFiles((prev) => [...prev, ...newFiles])
 
       pendingFiles.forEach((p) => {
         if (p.preview) URL.revokeObjectURL(p.preview)
@@ -296,26 +298,27 @@ export default function FileUpload({ parkingLotId, existingFiles = [], onFilesCh
   )
 }
 
-// コンポーネント外部から呼び出す用のアップロード関数
+// コンポーネント外部から呼び出す用のアップロード関数（並列実行）
 export async function uploadFilesForParkingLot(lotId: string, files: File[]) {
-  for (const file of files) {
-    const timestamp = Date.now()
-    const storagePath = `${lotId}/${timestamp}_${file.name}`
+  await Promise.all(
+    files.map(async (file, index) => {
+      const storagePath = `${lotId}/${Date.now()}_${index}_${file.name}`
 
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(storagePath, file)
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(storagePath, file)
 
-    if (uploadError) throw uploadError
+      if (uploadError) throw uploadError
 
-    await supabase.from('parking_lot_files').insert({
-      parking_lot_id: lotId,
-      file_name: file.name,
-      storage_path: storagePath,
-      file_size: file.size,
-      file_type: file.type,
+      await supabase.from('parking_lot_files').insert({
+        parking_lot_id: lotId,
+        file_name: file.name,
+        storage_path: storagePath,
+        file_size: file.size,
+        file_type: file.type,
+      })
     })
-  }
+  )
 }
 
 function formatFileSize(bytes: number): string {
