@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xxd:*)",
+      "Bash(find app/parking -name \"page.tsx\" -exec echo \"=== {} ===\" ; -exec head -5 {} ;)",
+      "WebSearch"
+    ]
+  }
+}

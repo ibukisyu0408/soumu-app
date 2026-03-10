@@ -70,7 +70,7 @@ export default function ParkingNewPage() {
       }
     }
 
-    router.push(`/parking/${lot.id}`)
+    router.push(`/parking/detail?id=${lot.id}`)
   }
 
   return (

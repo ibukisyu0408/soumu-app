@@ -1,16 +1,24 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { ParkingLot, ParkingSpace } from '@/lib/types'
 import ParkingStatusBadge from '@/components/ParkingStatusBadge'
 
 export default function ParkingDetailPage() {
-  const params = useParams()
+  return (
+    <Suspense fallback={<p className="text-gray-500">読み込み中...</p>}>
+      <ParkingDetailContent />
+    </Suspense>
+  )
+}
+
+function ParkingDetailContent() {
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const id = params.id as string
+  const id = searchParams.get('id') || ''
 
   const [lot, setLot] = useState<ParkingLot | null>(null)
   const [spaces, setSpaces] = useState<ParkingSpace[]>([])
@@ -66,7 +74,7 @@ export default function ParkingDetailPage() {
         <h1 className="text-2xl font-bold">{lot.name}</h1>
         <div className="flex gap-2">
           <Link
-            href={`/parking/${id}/edit`}
+            href={`/parking/edit?id=${id}`}
             className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700"
           >
             編集
