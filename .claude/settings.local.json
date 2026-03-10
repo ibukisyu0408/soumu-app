@@ -3,7 +3,18 @@
     "allow": [
       "Bash(xxd:*)",
       "Bash(find app/parking -name \"page.tsx\" -exec echo \"=== {} ===\" ; -exec head -5 {} ;)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(npm run build:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(firebase deploy:*)",
+      "Bash(grep:*)",
+      "Bash(while read f)",
+      "Bash(do grep -o '.{0,30}createClient.{0,80}' \"$f\")",
+      "Bash(done)",
+      "Bash(do basename \"$f\")"
     ]
   }
 }
