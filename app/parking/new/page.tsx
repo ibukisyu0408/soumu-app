@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import FileUpload, { uploadFilesForParkingLot } from '@/components/FileUpload'
 
 export default function ParkingNewPage() {
   const router = useRouter()
@@ -18,6 +19,7 @@ export default function ParkingNewPage() {
     notes: '',
   })
   const [spacesInput, setSpacesInput] = useState('')
+  const [pendingFiles, setPendingFiles] = useState<File[]>([])
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -67,6 +69,15 @@ export default function ParkingNewPage() {
             status: '空き',
           }))
         )
+      }
+    }
+
+    // ファイルアップロード
+    if (pendingFiles.length > 0 && lot) {
+      try {
+        await uploadFilesForParkingLot(lot.id, pendingFiles)
+      } catch {
+        alert('ファイルのアップロードに失敗しました（駐車場は登録済みです）')
       }
     }
 
@@ -176,6 +187,13 @@ export default function ParkingNewPage() {
               登録後に個別編集も可能です
             </p>
           </div>
+
+          <hr className="my-4" />
+
+          <FileUpload
+            mode="create"
+            onFilesChange={setPendingFiles}
+          />
         </div>
 
         <div className="mt-6 flex gap-3">

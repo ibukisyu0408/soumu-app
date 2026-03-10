@@ -23,6 +23,16 @@ export type ParkingSpace = {
   updated_at: string
 }
 
+export type ParkingLotFile = {
+  id: string
+  parking_lot_id: string
+  file_name: string
+  storage_path: string
+  file_size: number
+  file_type: string
+  created_at: string
+}
+
 export type ParkingLotWithSummary = ParkingLot & {
   total_spaces: number
   available_spaces: number

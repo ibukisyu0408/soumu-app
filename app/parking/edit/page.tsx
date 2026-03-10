@@ -4,8 +4,9 @@ import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { ParkingSpace } from '@/lib/types'
+import { ParkingSpace, ParkingLotFile } from '@/lib/types'
 import ParkingStatusBadge from '@/components/ParkingStatusBadge'
+import FileUpload from '@/components/FileUpload'
 
 export default function ParkingEditPage() {
   return (
@@ -32,6 +33,7 @@ function ParkingEditContent() {
     notes: '',
   })
   const [spaces, setSpaces] = useState<ParkingSpace[]>([])
+  const [files, setFiles] = useState<ParkingLotFile[]>([])
   const [newSpaceNumber, setNewSpaceNumber] = useState('')
   const [editingSpace, setEditingSpace] = useState<string | null>(null)
   const [editSpaceForm, setEditSpaceForm] = useState({
@@ -48,9 +50,10 @@ function ParkingEditContent() {
 
   async function fetchData() {
     setLoading(true)
-    const [lotRes, spacesRes] = await Promise.all([
+    const [lotRes, spacesRes, filesRes] = await Promise.all([
       supabase.from('parking_lots').select('*').eq('id', id).single(),
       supabase.from('parking_spaces').select('*').eq('parking_lot_id', id).order('space_number'),
+      supabase.from('parking_lot_files').select('*').eq('parking_lot_id', id).order('created_at'),
     ])
 
     if (lotRes.data) {
@@ -66,6 +69,7 @@ function ParkingEditContent() {
       })
     }
     if (spacesRes.data) setSpaces(spacesRes.data)
+    if (filesRes.data) setFiles(filesRes.data)
     setLoading(false)
   }
 
@@ -256,6 +260,15 @@ function ParkingEditContent() {
           </Link>
         </div>
       </form>
+
+      {/* 添付ファイル管理 */}
+      <div className="bg-white rounded-lg border border-gray-200 p-6 max-w-2xl mb-6">
+        <FileUpload
+          parkingLotId={id}
+          existingFiles={files}
+          mode="edit"
+        />
+      </div>
 
       <div className="bg-white rounded-lg border border-gray-200 p-6 max-w-2xl">
         <h2 className="text-lg font-semibold mb-4">駐車枠管理</h2>

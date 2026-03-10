@@ -4,8 +4,9 @@ import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { ParkingLot, ParkingSpace } from '@/lib/types'
+import { ParkingLot, ParkingSpace, ParkingLotFile } from '@/lib/types'
 import ParkingStatusBadge from '@/components/ParkingStatusBadge'
+import FileUpload from '@/components/FileUpload'
 
 export default function ParkingDetailPage() {
   return (
@@ -22,6 +23,7 @@ function ParkingDetailContent() {
 
   const [lot, setLot] = useState<ParkingLot | null>(null)
   const [spaces, setSpaces] = useState<ParkingSpace[]>([])
+  const [files, setFiles] = useState<ParkingLotFile[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -30,17 +32,23 @@ function ParkingDetailContent() {
 
   async function fetchData() {
     setLoading(true)
-    const [lotRes, spacesRes] = await Promise.all([
+    const [lotRes, spacesRes, filesRes] = await Promise.all([
       supabase.from('parking_lots').select('*').eq('id', id).single(),
       supabase
         .from('parking_spaces')
         .select('*')
         .eq('parking_lot_id', id)
         .order('space_number'),
+      supabase
+        .from('parking_lot_files')
+        .select('*')
+        .eq('parking_lot_id', id)
+        .order('created_at'),
     ])
 
     if (lotRes.data) setLot(lotRes.data)
     if (spacesRes.data) setSpaces(spacesRes.data)
+    if (filesRes.data) setFiles(filesRes.data)
     setLoading(false)
   }
 
@@ -116,6 +124,15 @@ function ParkingDetailContent() {
             <dd className="font-medium">{lot.notes || '-'}</dd>
           </div>
         </dl>
+      </div>
+
+      {/* 添付ファイル */}
+      <div className="mb-6">
+        <FileUpload
+          parkingLotId={id}
+          existingFiles={files}
+          mode="view"
+        />
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 p-6">
