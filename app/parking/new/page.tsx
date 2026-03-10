@@ -54,7 +54,8 @@ export default function ParkingNewPage() {
       return
     }
 
-    // 駐車枠の一括作成
+    // 駐車枠の一括作成とファイルアップロードを並列実行（画面遷移をブロックしない）
+    // 駐車枠・ファイルはバックグラウンドで処理し即座に画面遷移
     if (spacesInput.trim() && lot) {
       const spaceNumbers = spacesInput
         .split(',')
@@ -62,7 +63,7 @@ export default function ParkingNewPage() {
         .filter(Boolean)
 
       if (spaceNumbers.length > 0) {
-        await supabase.from('parking_spaces').insert(
+        supabase.from('parking_spaces').insert(
           spaceNumbers.map((num) => ({
             parking_lot_id: lot.id,
             space_number: num,
@@ -72,13 +73,8 @@ export default function ParkingNewPage() {
       }
     }
 
-    // ファイルアップロード
     if (pendingFiles.length > 0 && lot) {
-      try {
-        await uploadFilesForParkingLot(lot.id, pendingFiles)
-      } catch {
-        alert('ファイルのアップロードに失敗しました（駐車場は登録済みです）')
-      }
+      uploadFilesForParkingLot(lot.id, pendingFiles).catch(() => {})
     }
 
     router.push(`/parking/detail?id=${lot.id}`)

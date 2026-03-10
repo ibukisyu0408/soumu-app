@@ -32,24 +32,27 @@ function ParkingDetailContent() {
 
   async function fetchData() {
     setLoading(true)
-    const [lotRes, spacesRes, filesRes] = await Promise.all([
+    // 基本情報と駐車枠を先に取得して表示
+    const [lotRes, spacesRes] = await Promise.all([
       supabase.from('parking_lots').select('*').eq('id', id).single(),
       supabase
         .from('parking_spaces')
         .select('*')
         .eq('parking_lot_id', id)
         .order('space_number'),
-      supabase
-        .from('parking_lot_files')
-        .select('*')
-        .eq('parking_lot_id', id)
-        .order('created_at'),
     ])
 
     if (lotRes.data) setLot(lotRes.data)
     if (spacesRes.data) setSpaces(spacesRes.data)
-    if (filesRes.data) setFiles(filesRes.data)
     setLoading(false)
+
+    // ファイルは後から取得（画面表示をブロックしない）
+    const filesRes = await supabase
+      .from('parking_lot_files')
+      .select('*')
+      .eq('parking_lot_id', id)
+      .order('created_at')
+    if (filesRes.data) setFiles(filesRes.data)
   }
 
   async function handleDeleteLot() {
