@@ -14,7 +14,10 @@
       "Bash(while read f)",
       "Bash(do grep -o '.{0,30}createClient.{0,80}' \"$f\")",
       "Bash(done)",
-      "Bash(do basename \"$f\")"
+      "Bash(do basename \"$f\")",
+      "Bash(npx vercel --prod)",
+      "Bash(npx next build:*)",
+      "Bash(npx firebase deploy --only hosting)"
     ]
   }
 }
