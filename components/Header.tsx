@@ -12,6 +12,7 @@ export default function Header() {
         <nav className="flex gap-6 text-sm">
           <Link href="/" className="hover:underline">トップ</Link>
           <Link href="/parking" className="hover:underline">駐車場管理</Link>
+          <Link href="/vehicles" className="hover:underline">車両管理</Link>
         </nav>
       </div>
     </header>

@@ -18,8 +18,8 @@ const categories = [
   {
     title: "車両管理",
     description: "車両情報の管理・検索",
-    href: "#",
-    enabled: false,
+    href: "/vehicles",
+    enabled: true,
     icon: "🚗",
   },
 ];
