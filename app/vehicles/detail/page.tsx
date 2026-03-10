@@ -117,15 +117,25 @@ function VehicleDetailContent() {
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-        <h2 className="text-lg font-semibold mb-4">車検・保険</h2>
+        <h2 className="text-lg font-semibold mb-4">車検</h2>
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <dt className="text-gray-500">次回車検日</dt>
             <dd className="font-medium">{vehicle.inspection_date || '-'}</dd>
           </div>
+        </dl>
+      </div>
+
+      <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+        <h2 className="text-lg font-semibold mb-4">保険</h2>
+        <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <dt className="text-gray-500">保険会社</dt>
             <dd className="font-medium">{vehicle.insurance_company || '-'}</dd>
+          </div>
+          <div>
+            <dt className="text-gray-500">保険番号</dt>
+            <dd className="font-medium">{vehicle.insurance_number || '-'}</dd>
           </div>
           <div>
             <dt className="text-gray-500">保険満了日</dt>

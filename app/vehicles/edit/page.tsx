@@ -34,6 +34,7 @@ function VehicleEditContent() {
     lease_monthly_fee: '',
     inspection_date: '',
     insurance_company: '',
+    insurance_number: '',
     insurance_end_date: '',
     user_name: '',
     department: '',
@@ -63,6 +64,7 @@ function VehicleEditContent() {
         lease_monthly_fee: data.lease_monthly_fee?.toString() || '',
         inspection_date: data.inspection_date || '',
         insurance_company: data.insurance_company || '',
+        insurance_number: data.insurance_number || '',
         insurance_end_date: data.insurance_end_date || '',
         user_name: data.user_name || '',
         department: data.department || '',
@@ -100,6 +102,7 @@ function VehicleEditContent() {
         lease_monthly_fee: form.lease_monthly_fee ? parseInt(form.lease_monthly_fee) : null,
         inspection_date: form.inspection_date || null,
         insurance_company: form.insurance_company || null,
+        insurance_number: form.insurance_number || null,
         insurance_end_date: form.insurance_end_date || null,
         user_name: form.user_name || null,
         department: form.department || null,
@@ -199,22 +202,32 @@ function VehicleEditContent() {
 
         <hr className="my-6" />
 
-        <h2 className="text-lg font-semibold mb-4">車検・保険</h2>
+        <h2 className="text-lg font-semibold mb-4">車検</h2>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">次回車検日</label>
             <input type="date" name="inspection_date" value={form.inspection_date} onChange={handleChange} className={inputClass} />
           </div>
+        </div>
 
+        <hr className="my-6" />
+
+        <h2 className="text-lg font-semibold mb-4">保険</h2>
+        <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">保険会社</label>
               <input type="text" name="insurance_company" value={form.insurance_company} onChange={handleChange} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">保険満了日</label>
-              <input type="date" name="insurance_end_date" value={form.insurance_end_date} onChange={handleChange} className={inputClass} />
+              <label className="block text-sm font-medium mb-1">保険番号</label>
+              <input type="text" name="insurance_number" value={form.insurance_number} onChange={handleChange} className={inputClass} />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">保険満了日</label>
+            <input type="date" name="insurance_end_date" value={form.insurance_end_date} onChange={handleChange} className={inputClass} />
           </div>
         </div>
 

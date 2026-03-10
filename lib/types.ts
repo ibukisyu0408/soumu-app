@@ -54,6 +54,7 @@ export type Vehicle = {
   lease_monthly_fee: number | null
   inspection_date: string | null
   insurance_company: string | null
+  insurance_number: string | null
   insurance_end_date: string | null
   user_name: string | null
   department: string | null
